@@ -1,0 +1,33 @@
+import java.util.ArrayList;
+
+public class BD {
+    private ArrayList<User> usuarios;
+
+    public BD() {
+        this.usuarios = new ArrayList<>();
+        // Agregar usuarios de ejemplo
+        usuarios.add(new User(1, "Melo64", "@n4_124%", "Camilo Molina"));
+        usuarios.add(new User(2, "Roca2020", "asd@_44", "Santiago Restrepo"));
+    }
+
+    public ArrayList<User> getUsers() {
+        return usuarios;
+    }
+
+    public User findUser(int userId) {
+        for (User user : usuarios) {
+            if (user.getId() == userId) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public void addUser(User newUser) {
+        usuarios.add(newUser);
+    }
+
+    public void deleteUser(User userToDelete) {
+        usuarios.remove(userToDelete);
+    }
+}
