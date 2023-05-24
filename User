@@ -1,0 +1,191 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+// Clase User
+class User {
+    private int id;
+    private String username;
+    private String password;
+    private String name;
+
+    public User(int id, String username, String password, String name) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.name = name;
+    }
+
+    // Getters y setters (Omitidos para mayor brevedad)
+}
+
+// Clase BD
+class BD {
+    private List<User> usuarios;
+    private int lastId;
+
+    public BD() {
+        this.usuarios = new ArrayList<>();
+        this.lastId = 0;
+    }
+
+    public void addUser(User user) {
+        lastId++;
+        user.setId(lastId);
+        usuarios.add(user);
+    }
+
+    public List<User> getUsers() {
+        return usuarios;
+    }
+
+    public User getUserById(int userId) {
+        for (User user : usuarios) {
+            if (user.getId() == userId) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    public boolean deleteUser(int userId) {
+        for (User user : usuarios) {
+            if (user.getId() == userId) {
+                usuarios.remove(user);
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
+// Clase Controladora
+class Controladora {
+    private BD bd;
+
+    public Controladora(BD bd) {
+        this.bd = bd;
+    }
+
+    public void procesarRequest(String tipo, String cabecera, String body) {
+        if (tipo.equals("Get")) {
+            if (cabecera.equals("Leer usuarios existentes")) {
+                List<User> users = bd.getUsers();
+                // Procesar y devolver los usuarios
+            } else if (cabecera.equals("Encontrar un usuario")) {
+                // Procesar el ID del usuario del body y encontrar el usuario correspondiente en la BD
+                int userId = Integer.parseInt(body);
+                User user = bd.getUserById(userId);
+                // Procesar y devolver el usuario encontrado
+            }
+        } else if (tipo.equals("Post")) {
+            if (cabecera.equals("Crear un usuario")) {
+                // Procesar los valores del body para crear un nuevo usuario
+                // Agregar el usuario a la BD
+            }
+        } else if (tipo.equals("Put")) {
+            if (cabecera.equals("Editar la información de un usuario existente")) {
+                // Procesar el ID del usuario del body y encontrar el usuario correspondiente en la BD
+                int userId = Integer.parseInt(body);
+                User user = bd.getUserById(userId);
+                if (user != null) {
+                    // Procesar la nueva información del usuario y actualizarla en la BD
+                }
+            }
+        } else if (tipo.equals("Delete")) {
+            if (cabecera.equals("Eliminar un usuario")) {
+                // Procesar el ID del usuario del body y eliminar el usuario correspondiente de la BD
+            }
+        }
+    }
+}
+
+// Clase Main
+public class Main {
+    private BD bd;
+    private Controladora controladora;
+
+    public Main() {
+        this.bd = new BD();
+        this.controladora = new Controladora(bd);
+    }
+
+    public void mostrarMenu() {
+        System.out.println("¡Bienvenido a la aplicación API REST Parser!");
+        System.out.println("Seleccione una opción:");
+        System.out.println("1. Leer usuarios existentes (Get)");
+        System.out.println("2. Encontrar un usuario (Get)");
+        System.out.println("3. Crear un usuario (Post)");
+        System.out.println("4. Editar la información de un usuario existente (Put)");
+        System.out.println("5. Eliminar un usuario (Delete)");
+        System.out.println("6. Salir");
+    }
+
+    public void ejecutar() {
+        Scanner scanner = new Scanner(System.in);
+        boolean salir = false;
+
+        while (!salir) {
+            mostrarMenu();
+            int opcion = scanner.nextInt();
+            scanner.nextLine(); // Limpiar el buffer del Scanner
+
+            switch (opcion) {
+                case 1:
+                    controladora.procesarRequest("Get", "Leer usuarios existentes", "");
+                    // Procesar y mostrar los usuarios
+                    break;
+                case 2:
+                    System.out.println("Ingrese el ID del usuario:");
+                    int userId = scanner.nextInt();
+                    scanner.nextLine(); // Limpiar el buffer del Scanner
+                    controladora.procesarRequest("Get", "Encontrar un usuario", String.valueOf(userId));
+                    // Procesar y mostrar el usuario encontrado
+                    break;
+                case 3:
+                    System.out.println("Ingrese los datos del nuevo usuario:");
+                    System.out.print("ID: ");
+                    int newUserId = scanner.nextInt();
+                    scanner.nextLine(); // Limpiar el buffer del Scanner
+                    System.out.print("Username: ");
+                    String username = scanner.nextLine();
+                    System.out.print("Password: ");
+                    String password = scanner.nextLine();
+                    System.out.print("Name: ");
+                    String name = scanner.nextLine();
+
+                    User newUser = new User(newUserId, username, password, name);
+                    bd.addUser(newUser);
+                    System.out.println("Usuario creado exitosamente.");
+                    break;
+                case 4:
+                    System.out.println("Ingrese el ID del usuario a editar:");
+                    int userToEditId = scanner.nextInt();
+                    scanner.nextLine(); // Limpiar el buffer del Scanner
+                    // Obtener los nuevos datos del usuario
+                    controladora.procesarRequest("Put", "Editar la información de un usuario existente", String.valueOf(userToEditId));
+                    System.out.println("Usuario editado exitosamente.");
+                    break;
+                case 5:
+                    System.out.println("Ingrese el ID del usuario a eliminar:");
+                    int userToDeleteId = scanner.nextInt();
+                    scanner.nextLine(); // Limpiar el buffer del Scanner
+                    controladora.procesarRequest("Delete", "Eliminar un usuario", String.valueOf(userToDeleteId));
+                    System.out.println("Usuario eliminado exitosamente.");
+                    break;
+                case 6:
+                    salir = true;
+                    break;
+                default:
+                    System.out.println("Opción inválida. Por favor, seleccione una opción válida.");
+            }
+        }
+
+        scanner.close();
+    }
+
+    public static void main(String[] args) {
+        Main programa = new Main();
+        programa.ejecutar();
+    }
+}
