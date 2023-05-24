@@ -1,0 +1,59 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Controladora controladora = new Controladora();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("¡Bienvenido a la aplicación API REST Parser!");
+
+        int opcion;
+        do {
+            System.out.println("\nSeleccione una opción:");
+            System.out.println("1. Leer usuarios existentes (Get)");
+            System.out.println("2. Encontrar un usuario (Get)");
+            System.out.println("3. Crear un usuario (Post)");
+            System.out.println("4. Editar la información de un usuario existente (Put)");
+            System.out.println("5. Eliminar un usuario (Delete)");
+            System.out.println("6. Salir");
+
+            opcion = scanner.nextInt();
+            scanner.nextLine(); // Consumir el salto de línea después del número
+
+            switch (opcion) {
+                case 1:
+                    controladora.procesarRequest("Get", "Leer usuarios existentes", "");
+                    break;
+                case 2:
+                    System.out.println("Ingrese el ID del usuario a buscar:");
+                    int userId = scanner.nextInt();
+                    scanner.nextLine(); // Consumir el salto de línea después del número
+                    controladora.procesarRequest("Get", "Encontrar un usuario", String.valueOf(userId));
+                    break;
+                case 3:
+                    System.out.println("Ingrese los datos del nuevo usuario (ID, username, password, name):");
+                    String userData = scanner.nextLine();
+                    controladora.procesarRequest("Post", "Crear un usuario", userData);
+                    break;
+                case 4:
+                    System.out.println("Ingrese el ID del usuario a editar:");
+                    int userToEditId = scanner.nextInt();
+                    scanner.nextLine(); // Consumir el salto de línea después del número
+                    controladora.procesarRequest("Put", "Editar la información de un usuario existente", String.valueOf(userToEditId));
+                    break;
+                case 5:
+                    System.out.println("Ingrese el ID del usuario a eliminar:");
+                    int userToDeleteId = scanner.nextInt();
+                    scanner.nextLine(); // Consumir el salto de línea después del número
+                    controladora.procesarRequest("Delete", "Eliminar un usuario", String.valueOf(userToDeleteId));
+                    break;
+                case 6:
+                    System.out.println("¡Hasta luego!");
+                    break;
+                default:
+                    System.out.println("Opción inválida. Por favor, seleccione una opción válida.");
+                    break;
+            }
+        } while (opcion != 6);
+    }
+}
